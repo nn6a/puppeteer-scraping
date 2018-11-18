@@ -1,0 +1,19 @@
+{
+  "name": "puppeteer-scraping",
+  "version": "1.0.0",
+  "description": "Web scraping with Puppeteer.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "nn6a",
+  "repository" : {
+    "type" : "git",
+    "url" : "http://github.com/nn6a/puppeteer-scraping.git"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "puppeteer": "^1.10.0"
+  }
+}
