@@ -9,6 +9,7 @@ async function run() {
         ]
     });
 const page = await browser.newPage();
+disableUselessLoad(page);
 
 await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=1&aroute=0&arearoute=1&caroute=0101');
 
@@ -34,6 +35,7 @@ for (let i = 1; i <= ALL_PAGE_NUM; i++) {
         await button.click();
 
         let newPage = await new Promise(resolve => browser.once('targetcreated', target => resolve(target.page())));
+        disableUselessLoad(newPage);
 
         await newPage.waitForSelector(DATA_TABLE_ROW_SELECTOR);
         let tableData = await newPage.evaluate((selector) => {
@@ -63,6 +65,19 @@ for (let i = 1; i <= ALL_PAGE_NUM; i++) {
 browser.close();
 
 writeData(outputData);
+}
+
+function disableUselessLoad (page) {
+    page.setRequestInterception(true);
+
+    const disabledTypes = ['image', 'stylesheet', 'font', 'script'];
+    page.on('request', request => {
+        if (disabledTypes.includes(request.resourceType())) {
+            request.abort();
+        } else {
+            request.continue();
+        }
+    });
 }
 
 async function getAllJobNum (page) {
