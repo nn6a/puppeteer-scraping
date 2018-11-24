@@ -1,3 +1,4 @@
+const fs = require('fs');
 const puppeteer = require('puppeteer');
 
 (async() => {
@@ -11,6 +12,7 @@ const page = await browser.newPage();
 
 await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=1&aroute=0&arearoute=1&caroute=0101');
 
+const outputData = [];
 const TO_DESC_BUTTON_SELECTOR = '.list:nth-child(INDEX) > .jobSearchListUnit > .unitBase > .buttonArea > .toDesc';
 const JOB_DESC_PER_PAGE = 50;
 for (let i = 1; i <= JOB_DESC_PER_PAGE; i++) {
@@ -40,10 +42,14 @@ for (let i = 1; i <= JOB_DESC_PER_PAGE; i++) {
     == RESULT ${i}
     =======================================================================================
     `, tableData);
+    outputData.push(tableData);
 
     await newPage.close();
     await page.waitFor(10000);
 }
 
 browser.close();
+
+const dest = fs.createWriteStream('data.json', 'utf8');
+dest.write(JSON.stringify(outputData, null, 4));
 })();
