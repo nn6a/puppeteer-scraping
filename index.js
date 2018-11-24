@@ -8,15 +8,22 @@ const puppeteer = require('puppeteer');
     ]
 });
 const page = await browser.newPage();
-const navigationPromise = page.waitForNavigation();
+const newPagePromise = new Promise(resolve => browser.once('targetcreated', target => resolve(target.page())));
 
-await page.goto('https://employment.en-japan.com/desc_894920/?arearoute=1&aroute=0&caroute=0101');
+await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=1&aroute=0&arearoute=1&caroute=0101');
 
-await navigationPromise;
+const toDescButtonSelector = '.list:nth-child(1) > .jobSearchListUnit > .unitBase > .buttonArea > .toDesc';
+await page.waitForSelector(toDescButtonSelector);
+const button = await page.$(toDescButtonSelector);
+await button.click();
 
-const tableData = await page.evaluate(() => {
+let newPage = await newPagePromise;
+
+const dataTableRowSelector = '.contents > .dataTable > tbody > tr';
+await newPage.waitForSelector(dataTableRowSelector);
+const tableData = await newPage.evaluate((selector) => {
     const data = {};
-    const nodeList = document.querySelectorAll(".descArticleUnit.dataWork table.dataTable tbody tr");
+    const nodeList = document.querySelectorAll(selector);
     nodeList.forEach(_node => {
         const text = _node.innerText;
         const separatedText = text.split('\t');
@@ -25,8 +32,9 @@ const tableData = await page.evaluate(() => {
     });
 
     return data
-});
+}, dataTableRowSelector);
 console.log(tableData);
 
+await newPage.close();
 browser.close();
 })();
