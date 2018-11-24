@@ -1,7 +1,7 @@
 const fs = require('fs');
 const puppeteer = require('puppeteer');
 
-(async() => {
+async function run() {
     const browser = await puppeteer.launch({
         args: [
             '--no-sandbox',
@@ -14,7 +14,7 @@ await page.goto('https://employment.en-japan.com/search/search_list/?occupation=
 
 const outputData = [];
 const TO_DESC_BUTTON_SELECTOR = '.list:nth-child(INDEX) > .jobSearchListUnit > .unitBase > .buttonArea > .toDesc';
-const JOB_DESC_PER_PAGE = 50;
+const JOB_DESC_PER_PAGE = 1;
 for (let i = 1; i <= JOB_DESC_PER_PAGE; i++) {
     let toDescButtonSelector = TO_DESC_BUTTON_SELECTOR.replace('INDEX', i);
     await page.waitForSelector(toDescButtonSelector);
@@ -50,6 +50,12 @@ for (let i = 1; i <= JOB_DESC_PER_PAGE; i++) {
 
 browser.close();
 
-const dest = fs.createWriteStream('data.json', 'utf8');
-dest.write(JSON.stringify(outputData, null, 4));
-})();
+writeData(outputData);
+}
+
+function writeData (data) {
+    const dest = fs.createWriteStream('data.json', 'utf8');
+    dest.write(JSON.stringify(data, null, 4));
+}
+
+run();
