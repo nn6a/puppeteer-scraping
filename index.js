@@ -3,11 +3,11 @@ const puppeteer = require('puppeteer');
 
 (async() => {
     const browser = await puppeteer.launch({
-    args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox'
-    ]
-});
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox'
+        ]
+    });
 const page = await browser.newPage();
 
 await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=1&aroute=0&arearoute=1&caroute=0101');
