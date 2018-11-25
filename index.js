@@ -33,8 +33,8 @@ for (let i = 1; i <= ALL_PAGE_NUM; i++) {
     }, LIST_LENGTH_SELECTOR);
 
     // ページ内の全ての求人をループ
-    for (let i = 1; i <= listLength; i++) {
-        let toDescButtonSelector = TO_DESC_BUTTON_SELECTOR.replace('INDEX', i);
+    for (let j = 1; j <= listLength; j++) {
+        let toDescButtonSelector = TO_DESC_BUTTON_SELECTOR.replace('INDEX', j);
         await page.waitForSelector(toDescButtonSelector);
         let button = await page.$(toDescButtonSelector);
         await button.click();
@@ -55,7 +55,7 @@ for (let i = 1; i <= ALL_PAGE_NUM; i++) {
 
             return data
         }, DATA_TABLE_ROW_SELECTOR);
-        console.log(`\n===============================\n🚀 RESULT ${i}\n===============================\n`, tableData);
+        console.log(`\n===============================\n🚀 RESULT ${JOB_NUM_PER_PAGE * (i - 1) + j}\n===============================\n`, tableData);
         outputData.push(tableData);
 
         await newPage.close();
