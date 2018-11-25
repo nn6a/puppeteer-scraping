@@ -11,9 +11,10 @@ async function run() {
 const page = await browser.newPage();
 disableUselessLoad(page);
 
-await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=1&aroute=0&arearoute=1&caroute=0101');
+await page.goto('https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&aroute=0&arearoute=1&caroute=0101');
 
 const SEARCH_URL = 'https://employment.en-japan.com/search/search_list/?occupation=101000_101500_102000_102500_103000_103500_104000_104500_105000_105500_109000&pagenum=PAGE_NUM&aroute=0&arearoute=1&caroute=0101';
+const LIST_LENGTH_SELECTOR = '.list > .jobSearchListUnit';
 const TO_DESC_BUTTON_SELECTOR = '.list:nth-child(INDEX) > .jobSearchListUnit > .unitBase > .buttonArea > .toDesc';
 const DATA_TABLE_ROW_SELECTOR = '.contents > .dataTable > tbody > tr';
 
@@ -27,8 +28,12 @@ for (let i = 1; i <= ALL_PAGE_NUM; i++) {
     let searchUrl = SEARCH_URL.replace('PAGE_NUM', i);
     await page.goto(searchUrl);
 
+    let listLength = await page.evaluate((selector) => {
+        return document.querySelectorAll(selector).length;
+    }, LIST_LENGTH_SELECTOR);
+
     // ページ内の全ての求人をループ
-    for (let i = 1; i <= JOB_NUM_PER_PAGE; i++) {
+    for (let i = 1; i <= listLength; i++) {
         let toDescButtonSelector = TO_DESC_BUTTON_SELECTOR.replace('INDEX', i);
         await page.waitForSelector(toDescButtonSelector);
         let button = await page.$(toDescButtonSelector);
